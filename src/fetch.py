@@ -12,6 +12,10 @@ def fetch(query):
     }
 
     r = requests.post(url = URL, json = query, headers= headers)
+    
+    if r.status_code != 200:
+        print('Error: ' + str(r.status_code))
+        return None
 
     r_dict = json.loads(r.text)
 
@@ -29,16 +33,14 @@ def getContributionsCalendar():
     {
         viewer { 
             contributionsCollection {
-            contributionCalendar {
-                totalContributions
-                weeks {
-                contributionDays {
-                    contributionCount
-                    weekday
-                    date
+                contributionCalendar {
+                    totalContributions
+                    weeks {
+                        contributionDays {
+                            contributionCount
+                        }
+                    }
                 }
-                }
-            }
             }
         }
     }
