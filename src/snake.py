@@ -8,17 +8,19 @@ from itertools import product, repeat
 
 
 class snake:
-    def __init__(self, length=4, color=(0, 0, 255), block_size=20, bounds=(52,7), tile_gap=2):
-        self.body = list(repeat((0,tile_gap), length))
+    def __init__(self, length=4, color=(0, 0, 255), block_size=20, bounds=(52, 7)):
+        self.body = list(repeat((0, 0), length))
         self.color = color
         self.size = length
         self.block_size = block_size
         self.bounds = bounds
-    
+
     def move(self, direction):
         self.body.pop(0)
         # TODO: check
-        self.body.append((self.body[-1][0] + direction[0], self.body[-1][1] + direction[1]))
+        self.body.append(
+            (self.body[-1][0] + direction[0], self.body[-1][1] + direction[1])
+        )
 
     def draw(self, screen):
         for i in self.body:
