@@ -8,15 +8,15 @@ from itertools import product, repeat
 
 
 class snake:
-    def __init__(self, length=4, color=(0, 0, 255), block_size=20, bounds=(52,7)):
-        self.body = list(repeat((0,0), length))
+    def __init__(self, length=4, color=(0, 0, 255), block_size=20, bounds=(52,7), tile_gap=2):
+        self.body = list(repeat((0,tile_gap), length))
         self.color = color
         self.size = length
         self.block_size = block_size
         self.bounds = bounds
     
     def move(self, direction):
-        self.body.pop()
+        self.body.pop(0)
         # TODO: check
         self.body.append((self.body[-1][0] + direction[0], self.body[-1][1] + direction[1]))
 
@@ -30,6 +30,7 @@ class snake:
 class snake_anim:
     def __init__(self, commit_cal):
         pg.init()
+        pg.display.set_caption('Contributions Snake')
         self.background_color = pg.Color("black")
         self.tile_color = pg.Color("green")
         self.tile_size = 20
@@ -40,29 +41,31 @@ class snake_anim:
             self.tile_gap + self.cal_height * (self.tile_size + self.tile_gap),
         )
         self.screen = pg.display.set_mode(self.screen_size)
-        # self.tile_color = np.zeros(self.cal_size)
+        #self.tile_color = commit_cal
         self.tiles = product(
             range(self.tile_gap, self.screen_width, self.tile_size + self.tile_gap),
             range(self.tile_gap, self.screen_height, self.tile_size + self.tile_gap),
         )
-        self.snake = snake(block_size=self.tile_size)
+        self.snake = snake(block_size=self.tile_size, tile_gap=self.tile_gap)
+        self.clock = pg.time.Clock()
 
     def run(self):
         complete = False
         while not complete:
-            # for event in pg.event.get():
-            #     if event.type == pg.QUIT:
-            #         pg.quit()
-            #         sys.exit()
-            self.snake.move(random.choice([(-1, 0), (1, 0), (0, -1), (0, 1)]))
+            #for event in pg.event.get():
+            #    if event.type == pg.QUIT:
+            #        pg.quit()
+            #        quit()
+            self.snake.move([20,0])
             self.draw()
-            time.sleep(0.5)
+            self.clock.tick(30)
+        #pg.quit()
+        #quit()
 
     def draw(self):
-        # self.screen.fill(self.background_color)
         for i in self.tiles:
             pg.draw.rect(
-                self.screen, self.tile_color, (*i, self.tile_size, self.tile_size), 0, 3
+                self.screen, self.tile_color, (*i, self.tile_size, self.tile_size), 0, 4
             )
         self.snake.draw(self.screen)
         pg.display.update()
