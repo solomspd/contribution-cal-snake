@@ -5,7 +5,7 @@ import json
 URL = "https://api.github.com/graphql"
 
 def fetch(query):
-    token = 'test_token'
+    token = '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'
     headers = {
         'Content-type': 'application/json',
         'Authorization': 'token ' + token,
