@@ -39,17 +39,13 @@ class snake_anim:
         self.tile_color = pg.Color("green")
         self.tile_size = 20
         self.tile_gap = 2
-        self.cal_size = self.cal_width, self.cal_height = 52, 7
+        self.cal_size = self.cal_width, self.cal_height = 53, 7
         self.screen_size = self.screen_width, self.screen_height = (
             self.tile_gap + self.cal_width * (self.tile_size + self.tile_gap),
             self.tile_gap + self.cal_height * (self.tile_size + self.tile_gap),
         )
         self.screen = pg.display.set_mode((self.screen_size[0], self.screen_size[1]))
-        # self.tile_color = commit_cal
-        self.tiles = product(
-            range(self.tile_gap, self.screen_width, self.tile_size + self.tile_gap),
-            range(self.tile_gap, self.screen_height, self.tile_size + self.tile_gap),
-        )
+        self.tiles = commit_cal
         self.snake = snake(block_size=self.tile_size, tile_gap=self.tile_gap)
         self.clock = pg.time.Clock()
 
@@ -63,25 +59,23 @@ class snake_anim:
             self.snake.move([20, 0])
             self.draw()
             self.clock.tick(30)
-        # pg.quit()
-        # quit()
 
     def draw(self):
         self.screen.fill(self.background_color)
 
-        for i in range(
-            self.tile_gap, self.screen_width, self.tile_size + self.tile_gap
-        ):
-            for j in range(
-                self.tile_gap, self.screen_height, self.tile_size + self.tile_gap
-            ):
+        x = self.tile_gap
+        for i in self.tiles:
+            y = self.tile_gap
+            for j in i:
                 pg.draw.rect(
                     self.screen,
-                    self.tile_color,
-                    (i, j, self.tile_size, self.tile_size),
+                    j,
+                    (x, y, self.tile_size, self.tile_size),
                     0,
                     4,
                 )
+                y += self.tile_size + self.tile_gap
+            x += self.tile_size + self.tile_gap
 
         self.snake.draw(self.screen)
         pg.display.update()

@@ -10,7 +10,7 @@ URL = "https://api.github.com/graphql"
 
 
 def fetch(query):
-    token = "token"
+    token = ""
     headers = {
         "Content-type": "application/json",
         "Authorization": "token " + token,
