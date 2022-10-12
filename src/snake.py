@@ -32,20 +32,20 @@ class snake:
             self.head[0] += 1
         
         tail = self.body.pop(0)
-        if self.body == 0:
+        if len(self.body) == 0:
             self.body.append((tail[0] + dir_ammount[0], tail[1] + dir_ammount[1]))
         else:
             self.body.append((self.body[-1][0] + dir_ammount[0], self.body[-1][1] + dir_ammount[1]))
 
     def draw(self, screen):
-        for element, i in self.body:
+        for i, element in enumerate(self.body):
             pg.draw.rect(
                 screen, self.colors[i], (*element, self.block_size, self.block_size), 0, 4
             )
 
     def eat(self, color):
-        self.body.insert(0, position)
-        self.colors.append(color)
+        self.body.insert(0, (self.body[0][0] - (self.block_size + self.tile_gap), self.body[0][1] - (self.block_size + self.tile_gap)))
+        self.colors.insert(0,color)
 
 
 class snake_anim:
