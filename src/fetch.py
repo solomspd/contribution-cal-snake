@@ -2,15 +2,17 @@ from bisect import bisect_left
 import requests
 import json
 import pygame as pg
-
 import numpy as np
+from dotenv import load_dotenv
+import os
 
+load_dotenv()  # take environment variables from .env.
 
 URL = "https://api.github.com/graphql"
 
 
 def fetch(query):
-    token = "token"
+    token = os.environ.get('ACCESS_TOKEN')
     headers = {
         "Content-type": "application/json",
         "Authorization": "token " + token,

@@ -1,17 +1,10 @@
 import pygame as pg
-import numpy as np
-import sys
-import time
-import random
-
 from itertools import product, repeat
-
-
 class snake:
     def __init__(
         self, length=4, color=(0, 0, 255), block_size=20, bounds=(52, 7), tile_gap=2
     ):
-        self.body = list(repeat((0, 0), length))
+        self.body = list(repeat((tile_gap, tile_gap), length))
         self.color = color
         self.size = length
         self.block_size = block_size
