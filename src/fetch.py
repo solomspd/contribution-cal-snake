@@ -1,8 +1,6 @@
 from bisect import bisect_left
 import requests
 import json
-import pygame as pg
-import numpy as np
 from dotenv import load_dotenv
 import os
 
@@ -51,7 +49,7 @@ def mapResponse(response):
     )
 
 
-def getContributionsCalendar(bins=6):
+def getContributionsCalendar():
     query = {
         "query": """
     {
@@ -71,13 +69,4 @@ def getContributionsCalendar(bins=6):
   """
     }
     ret = fetch(query)
-    mx = max(map(max, ret))
-    mn = max(map(min, ret))
-    bounds = np.linspace(mn, mx, bins)
-    colors = [
-        pg.Color(i) for i in ["#2d333b", "#0e4429", "#006d32", "#26a641", "#39d353"]
-    ]
-    for i in range(len(ret)):
-        for j in range(len(ret[i])):
-            ret[i][j] = colors[min(bisect_left(bounds, ret[i][j]), len(colors) - 1)]
     return ret

@@ -1,5 +1,9 @@
 import pygame as pg
+import numpy as np
 from itertools import product, repeat
+from bisect import bisect_left
+
+
 class snake:
     def __init__(
         self, length=4, color=(0, 0, 255), block_size=20, bounds=(52, 7), tile_gap=2
@@ -29,7 +33,17 @@ class snake_anim:
         pg.init()
         pg.display.set_caption("Contributions Snake")
         self.background_color = pg.Color("black")
-        self.tile_color = pg.Color("green")
+        colors = [
+            pg.Color(i) for i in ["#2d333b", "#0e4429", "#006d32", "#26a641", "#39d353"]
+        ]
+        self.tiles = commit_cal
+        mx = max(map(max, self.tiles))
+        mn = max(map(min, self.tiles))
+        bounds = np.linspace(mn, mx, len(colors))
+        
+        for i in range(len(self.tiles)):
+            for j in range(len(self.tiles[i])):
+                self.tiles[i][j] = colors[min(bisect_left(bounds, self.tiles[i][j]), len(colors) - 1)]
         self.tile_size = 20
         self.tile_gap = 2
         self.cal_size = self.cal_width, self.cal_height = 53, 7
@@ -38,14 +52,13 @@ class snake_anim:
             self.tile_gap + self.cal_height * (self.tile_size + self.tile_gap),
         )
         self.screen = pg.display.set_mode((self.screen_size[0], self.screen_size[1]))
-        self.tiles = commit_cal
         self.snake = snake(block_size=self.tile_size, tile_gap=self.tile_gap)
         self.clock = pg.time.Clock()
         self.moves = []
 
     def run(self):
         map = [[0] * 52] * 7
-        self.generateSpiralOrder(map, 'R')
+        self.generateSpiralOrder(map, "R")
         for i in range(len(self.moves)):
             self.snake.move(self.moves[i])
             self.draw()
@@ -55,20 +68,20 @@ class snake_anim:
 
     def generateSpiralOrder(self, matrix, direction):
         if not matrix:
-            return 
+            return
         row = list(matrix.pop(0))
-        if direction == 'R':
-            self.moves.extend([[22,0]] * len(row))
-            self.generateSpiralOrder(([*zip(*matrix)][::-1]), 'D')
-        if direction == 'L':
-            self.moves.extend([[-22,0]] * len(row))
-            self.generateSpiralOrder(([*zip(*matrix)][::-1]), 'U')
-        if direction == 'U':
-            self.moves.extend([[0,-22]] * len(row))
-            self.generateSpiralOrder(([*zip(*matrix)][::-1]), 'R')
-        if direction == 'D':
-            self.moves.extend([[0,22]] * len(row))
-            self.generateSpiralOrder(([*zip(*matrix)][::-1]), 'L')
+        if direction == "R":
+            self.moves.extend([[22, 0]] * len(row))
+            self.generateSpiralOrder(([*zip(*matrix)][::-1]), "D")
+        if direction == "L":
+            self.moves.extend([[-22, 0]] * len(row))
+            self.generateSpiralOrder(([*zip(*matrix)][::-1]), "U")
+        if direction == "U":
+            self.moves.extend([[0, -22]] * len(row))
+            self.generateSpiralOrder(([*zip(*matrix)][::-1]), "R")
+        if direction == "D":
+            self.moves.extend([[0, 22]] * len(row))
+            self.generateSpiralOrder(([*zip(*matrix)][::-1]), "L")
 
     def draw(self):
         self.screen.fill(self.background_color)
