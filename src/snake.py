@@ -6,26 +6,45 @@ from bisect import bisect_left
 
 class snake:
     def __init__(
-        self, length=4, color=(0, 0, 255), block_size=20, bounds=(52, 7), tile_gap=2
+        self, length=1, color=(0, 0, 255), block_size=20, bounds=(52, 7), tile_gap=2
     ):
-        self.body = list(repeat((tile_gap, tile_gap), length))
-        self.color = color
+        self.body = list(repeat((tile_gap, tile_gap, color), length))
         self.size = length
         self.block_size = block_size
         self.bounds = bounds
+        self.tile_gap = tile_gap
 
     def move(self, direction):
-        self.body.pop(0)
-        # TODO: check
-        self.body.append(
-            (self.body[-1][0] + direction[0], self.body[-1][1] + direction[1])
-        )
+        tail = self.body.pop(0)
+        if direction == "U":
+            dir_ammount = (0, -(self.block_size + self.tile_gap))
+        elif direction == "D":
+            dir_ammount = (0, self.block_size + self.tile_gap)
+        elif direction == "L":
+            dir_ammount = (-(self.block_size + self.tile_gap), 0)
+        elif direction == "R":
+            dir_ammount = (self.block_size + self.tile_gap, 0)
+
+        if len(self.body) == 0:
+            new_index = (tail[0] + dir_ammount[0], tail[1] + dir_ammount[1])
+            self.body.append(new_index)
+        else:
+            new_index = (
+                self.body[-1][0] + dir_ammount[0],
+                self.body[-1][1] + dir_ammount[1],
+            )
+            self.body.append(new_index)
+        return new_index
 
     def draw(self, screen):
-        for i in self.body:
+        for element in self.body:
             pg.draw.rect(
-                screen, self.color, (*i, self.block_size, self.block_size), 0, 4
+                screen, element[2], (element[0], element[1], self.block_size, self.block_size), 0, 4
             )
+
+    def eat(self, index, color):
+        self.body.insert(0, (index[0], index[1], color))
+        self.size += 1
 
 
 class snake_anim:
@@ -57,10 +76,12 @@ class snake_anim:
         self.moves = []
 
     def run(self):
-        map = [[0] * 52] * 7
-        self.generateSpiralOrder(map, "R")
+        matrix = [[0] * 52] * 7
+        self.generateSpiralOrder(matrix, "R")
         for i in range(len(self.moves)):
-            self.snake.move(self.moves[i])
+            new_index = self.snake.move(self.moves[i])
+            self.snake.eat(new_index, self.tile_color)
+            self.tiles[new_index[1]][new_index[0]] = self.snake.color
             self.draw()
             self.clock.tick(30)
         pg.quit()
@@ -71,16 +92,16 @@ class snake_anim:
             return
         row = list(matrix.pop(0))
         if direction == "R":
-            self.moves.extend([[22, 0]] * len(row))
+            self.moves.extend(["R"] * len(row))
             self.generateSpiralOrder(([*zip(*matrix)][::-1]), "D")
         if direction == "L":
-            self.moves.extend([[-22, 0]] * len(row))
+            self.moves.extend(["L"] * len(row))
             self.generateSpiralOrder(([*zip(*matrix)][::-1]), "U")
         if direction == "U":
-            self.moves.extend([[0, -22]] * len(row))
+            self.moves.extend(["U"] * len(row))
             self.generateSpiralOrder(([*zip(*matrix)][::-1]), "R")
         if direction == "D":
-            self.moves.extend([[0, 22]] * len(row))
+            self.moves.extend(["D"] * len(row))
             self.generateSpiralOrder(([*zip(*matrix)][::-1]), "L")
 
     def draw(self):
