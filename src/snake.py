@@ -41,17 +41,34 @@ class snake_anim:
         self.tiles = commit_cal
         self.snake = snake(block_size=self.tile_size, tile_gap=self.tile_gap)
         self.clock = pg.time.Clock()
+        self.moves = []
 
     def run(self):
-        complete = False
-        while not complete:
-            # for event in pg.event.get():
-            #    if event.type == pg.QUIT:
-            #        pg.quit()
-            #        quit()
-            self.snake.move([20, 0])
+        map = [[0] * 52] * 7
+        self.generateSpiralOrder(map, 'R')
+        for i in range(len(self.moves)):
+            self.snake.move(self.moves[i])
             self.draw()
             self.clock.tick(30)
+        pg.quit()
+        quit()
+
+    def generateSpiralOrder(self, matrix, direction):
+        if not matrix:
+            return 
+        row = list(matrix.pop(0))
+        if direction == 'R':
+            self.moves.extend([[22,0]] * len(row))
+            self.generateSpiralOrder(([*zip(*matrix)][::-1]), 'D')
+        if direction == 'L':
+            self.moves.extend([[-22,0]] * len(row))
+            self.generateSpiralOrder(([*zip(*matrix)][::-1]), 'U')
+        if direction == 'U':
+            self.moves.extend([[0,-22]] * len(row))
+            self.generateSpiralOrder(([*zip(*matrix)][::-1]), 'R')
+        if direction == 'D':
+            self.moves.extend([[0,22]] * len(row))
+            self.generateSpiralOrder(([*zip(*matrix)][::-1]), 'L')
 
     def draw(self):
         self.screen.fill(self.background_color)
