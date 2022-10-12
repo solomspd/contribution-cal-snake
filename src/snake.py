@@ -3,6 +3,7 @@ import pygame as pg
 import numpy as np
 from itertools import product, repeat
 from bisect import bisect_left
+import logging
 
 
 class snake:
@@ -58,11 +59,13 @@ class snake_anim:
         self.tiles = commit_cal
         mx = max(map(max, self.tiles))
         mn = max(map(min, self.tiles))
-        bounds = np.linspace(mn, mx, len( self.colors))
-        
+        bounds = np.linspace(mn, mx, len(self.colors))
+
         for i in range(len(self.tiles)):
             for j in range(len(self.tiles[i])):
-                self.tiles[i][j] =  self.colors[min(bisect_left(bounds, self.tiles[i][j]), len(self.colors) - 1)]
+                self.tiles[i][j] = self.colors[
+                    min(bisect_left(bounds, self.tiles[i][j]), len(self.colors) - 1)
+                ]
         self.tile_size = 20
         self.tile_gap = 2
         self.cal_size = self.cal_width, self.cal_height = 53, 7

@@ -3,6 +3,7 @@ import requests
 import json
 from dotenv import load_dotenv
 import os
+import logging
 
 load_dotenv()  # take environment variables from .env.
 
@@ -10,7 +11,7 @@ URL = "https://api.github.com/graphql"
 
 
 def fetch(query):
-    token = os.environ.get('ACCESS_TOKEN')
+    token = os.environ.get("ACCESS_TOKEN")
     headers = {
         "Content-type": "application/json",
         "Authorization": "token " + token,
@@ -69,4 +70,5 @@ def getContributionsCalendar():
   """
     }
     ret = fetch(query)
+    logging.debug(ret)
     return ret
