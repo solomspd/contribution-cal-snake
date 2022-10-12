@@ -1,3 +1,4 @@
+from turtle import position
 import pygame as pg
 import numpy as np
 from itertools import product, repeat
@@ -6,45 +7,44 @@ from bisect import bisect_left
 
 class snake:
     def __init__(
-        self, length=1, color=(0, 0, 255), block_size=20, bounds=(52, 7), tile_gap=2
+        self, color=(0, 0, 255), block_size=20, bounds=(52, 7), tile_gap=2
     ):
-        self.body = list(repeat((tile_gap, tile_gap, color), length))
-        self.size = length
+        self.body = list(repeat((tile_gap, tile_gap), 1))
         self.block_size = block_size
         self.bounds = bounds
         self.tile_gap = tile_gap
+        self.head = [0, 0]
+        self.colors = [color]
 
     def move(self, direction):
-        tail = self.body.pop(0)
         if direction == "U":
             dir_ammount = (0, -(self.block_size + self.tile_gap))
+            self.head[1] -= 1
         elif direction == "D":
             dir_ammount = (0, self.block_size + self.tile_gap)
+            self.head[1] += 1
         elif direction == "L":
             dir_ammount = (-(self.block_size + self.tile_gap), 0)
+            self.head[0] -= 1
         elif direction == "R":
             dir_ammount = (self.block_size + self.tile_gap, 0)
-
-        if len(self.body) == 0:
-            new_index = (tail[0] + dir_ammount[0], tail[1] + dir_ammount[1])
-            self.body.append(new_index)
+            self.head[0] += 1
+        
+        tail = self.body.pop(0)
+        if self.body == 0:
+            self.body.append((tail[0] + dir_ammount[0], tail[1] + dir_ammount[1]))
         else:
-            new_index = (
-                self.body[-1][0] + dir_ammount[0],
-                self.body[-1][1] + dir_ammount[1],
-            )
-            self.body.append(new_index)
-        return new_index
+            self.body.append((self.body[-1][0] + dir_ammount[0], self.body[-1][1] + dir_ammount[1]))
 
     def draw(self, screen):
-        for element in self.body:
+        for element, i in self.body:
             pg.draw.rect(
-                screen, element[2], (element[0], element[1], self.block_size, self.block_size), 0, 4
+                screen, self.colors[i], (*element, self.block_size, self.block_size), 0, 4
             )
 
-    def eat(self, index, color):
-        self.body.insert(0, (index[0], index[1], color))
-        self.size += 1
+    def eat(self, color):
+        self.body.insert(0, position)
+        self.colors.append(color)
 
 
 class snake_anim:
@@ -52,17 +52,17 @@ class snake_anim:
         pg.init()
         pg.display.set_caption("Contributions Snake")
         self.background_color = pg.Color("black")
-        colors = [
+        self.colors = [
             pg.Color(i) for i in ["#2d333b", "#0e4429", "#006d32", "#26a641", "#39d353"]
         ]
         self.tiles = commit_cal
         mx = max(map(max, self.tiles))
         mn = max(map(min, self.tiles))
-        bounds = np.linspace(mn, mx, len(colors))
+        bounds = np.linspace(mn, mx, len( self.colors))
         
         for i in range(len(self.tiles)):
             for j in range(len(self.tiles[i])):
-                self.tiles[i][j] = colors[min(bisect_left(bounds, self.tiles[i][j]), len(colors) - 1)]
+                self.tiles[i][j] =  self.colors[min(bisect_left(bounds, self.tiles[i][j]), len(self.colors) - 1)]
         self.tile_size = 20
         self.tile_gap = 2
         self.cal_size = self.cal_width, self.cal_height = 53, 7
@@ -79,11 +79,13 @@ class snake_anim:
         matrix = [[0] * 52] * 7
         self.generateSpiralOrder(matrix, "R")
         for i in range(len(self.moves)):
-            new_index = self.snake.move(self.moves[i])
-            self.snake.eat(new_index, self.tile_color)
-            self.tiles[new_index[1]][new_index[0]] = self.snake.color
+            self.snake.move(self.moves[i])
+            snake_head = self.snake.head
+            if self.tiles[snake_head[0]][snake_head[1]] != self.colors[0]:
+                self.snake.eat(self.tiles[snake_head[0]][snake_head[1]])
+                self.tiles[snake_head[0]][snake_head[1]] = self.colors[0]
             self.draw()
-            self.clock.tick(30)
+            self.clock.tick(5)
         pg.quit()
         quit()
 
