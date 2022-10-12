@@ -7,9 +7,7 @@ import logging
 
 
 class snake:
-    def __init__(
-        self, color=(0, 0, 255), block_size=20, bounds=(52, 7), tile_gap=2
-    ):
+    def __init__(self, color=(0, 0, 255), block_size=20, bounds=(52, 7), tile_gap=2):
         self.body = list(repeat((tile_gap, tile_gap), 1))
         self.block_size = block_size
         self.bounds = bounds
@@ -30,22 +28,34 @@ class snake:
         elif direction == "R":
             dir_ammount = (self.block_size + self.tile_gap, 0)
             self.head[0] += 1
-        
+
         tail = self.body.pop(0)
         if len(self.body) == 0:
             self.body.append((tail[0] + dir_ammount[0], tail[1] + dir_ammount[1]))
         else:
-            self.body.append((self.body[-1][0] + dir_ammount[0], self.body[-1][1] + dir_ammount[1]))
+            self.body.append(
+                (self.body[-1][0] + dir_ammount[0], self.body[-1][1] + dir_ammount[1])
+            )
 
     def draw(self, screen):
         for i, element in enumerate(self.body):
             pg.draw.rect(
-                screen, self.colors[i], (*element, self.block_size, self.block_size), 0, 4
+                screen,
+                self.colors[i],
+                (*element, self.block_size, self.block_size),
+                0,
+                4,
             )
 
     def eat(self, color):
-        self.body.insert(0, (self.body[0][0] - (self.block_size + self.tile_gap), self.body[0][1] - (self.block_size + self.tile_gap)))
-        self.colors.insert(0,color)
+        self.body.insert(
+            0,
+            (
+                self.body[0][0] - (self.block_size + self.tile_gap),
+                self.body[0][1] - (self.block_size + self.tile_gap),
+            ),
+        )
+        self.colors.insert(0, color)
 
 
 class snake_anim:
@@ -84,7 +94,11 @@ class snake_anim:
         for i in range(len(self.moves)):
             self.snake.move(self.moves[i])
             snake_head = self.snake.head
-            if self.tiles[snake_head[0]][snake_head[1]] != self.colors[0]:
+            if (
+                0 <= snake_head[0] < len(self.tiles)
+                and 0 <= snake_head[1] < len(self.tiles[snake_head[0]])
+                and self.tiles[snake_head[0]][snake_head[1]] != self.colors[0]
+            ):
                 self.snake.eat(self.tiles[snake_head[0]][snake_head[1]])
                 self.tiles[snake_head[0]][snake_head[1]] = self.colors[0]
             self.draw()
