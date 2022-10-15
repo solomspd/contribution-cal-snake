@@ -4,14 +4,14 @@ on:
   schedule:
   - cron: "0 13 * * 1"
 jobs:
-  build:
+  Setup_And_Run:
     runs-on: ubuntu-latest
     steps:
       - name: checkout repo content
         uses: actions/checkout@v2.5.0
       - name: Install Dependencies
         run: |
-          python -m pip install wand numpy python-dotenv requests pygame
+          pip install wand numpy python-dotenv pygame && git clone git://github.com/psf/requests.git
       - name: Setup Python
         uses: actions/setup-python@v4.3.0
         with:
