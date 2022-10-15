@@ -1,5 +1,6 @@
 name: Generate GIF
 on:
+  workflow_dispatch:
   schedule:
   - cron: "0 13 * * 1"
 jobs:
