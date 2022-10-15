@@ -7,8 +7,8 @@ import logging
 
 
 class snake:
-    def __init__(self, color=(0, 0, 255), block_size=20, bounds=(52, 7), tile_gap=2):
-        self.body = list(repeat((tile_gap, tile_gap), 1))
+    def __init__(self, length=1, color=(0, 0, 255), block_size=20, bounds=(52, 7), tile_gap=2):
+        self.body = list(repeat((tile_gap, tile_gap), length))
         self.block_size = block_size
         self.bounds = bounds
         self.tile_gap = tile_gap
@@ -38,24 +38,17 @@ class snake:
             )
 
     def draw(self, screen):
-        for i, element in enumerate(self.body):
+        for i, color in enumerate(self.colors):
             pg.draw.rect(
                 screen,
-                self.colors[i],
-                (*element, self.block_size, self.block_size),
+                color,
+                (*self.body[len(self.body) - 1 - i], self.block_size, self.block_size),
                 0,
                 4,
             )
 
     def eat(self, color):
-        self.body.insert(
-            0,
-            (
-                self.body[0][0] - (self.block_size + self.tile_gap),
-                self.body[0][1] - (self.block_size + self.tile_gap),
-            ),
-        )
-        self.colors.insert(0, color)
+        self.colors.insert(1,color)
 
 
 class snake_anim:
@@ -84,7 +77,12 @@ class snake_anim:
             self.tile_gap + self.cal_height * (self.tile_size + self.tile_gap),
         )
         self.screen = pg.display.set_mode((self.screen_size[0], self.screen_size[1]))
-        self.snake = snake(block_size=self.tile_size, tile_gap=self.tile_gap)
+        snake_length = 1;
+        for i in range(len(self.tiles)):
+            for j in range(len(self.tiles[i])):
+                if self.tiles[i][j] != self.colors[0]:
+                    snake_length += 1
+        self.snake = snake(length=snake_length, block_size=self.tile_size, tile_gap=self.tile_gap)
         self.clock = pg.time.Clock()
         self.moves = []
 
