@@ -9,13 +9,13 @@ jobs:
     steps:
       - name: checkout repo content
         uses: actions/checkout@v2.5.0
-      - name: Install Dependencies
-        run: |
-          pip install wand numpy python-dotenv pygame && git clone git://github.com/psf/requests.git
       - name: Setup Python
         uses: actions/setup-python@v4.3.0
         with:
           python-version: 3.8
+      - name: Install Dependencies
+        run: |
+          pip install wand numpy python-dotenv requests pygame
       - name: Run Python Script
         run: |
           python ./src/main.py
