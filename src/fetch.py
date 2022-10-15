@@ -19,6 +19,7 @@ def fetch(query):
     r = requests.post(url=URL, json=query, headers=headers)
 
     if r.status_code != 200:
+        print("Error: ", r.status_code)
         logging.error("Error: " + str(r.status_code))
         return None
 
