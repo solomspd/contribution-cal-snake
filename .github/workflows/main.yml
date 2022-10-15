@@ -10,7 +10,6 @@ jobs:
       - name: Install Dependencies
         run: |
           pip install snake wand numpy python-dotenv requests pygame
-          cwd
 
       - name: Run Python Script
         uses: jannekem/run-python-script-action@v1.3
