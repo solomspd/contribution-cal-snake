@@ -4,7 +4,7 @@ on:
   schedule:
     - cron: "0 13 * * 1"
 jobs:
-  Setup_And_Run:
+  Setup_And_Run_And_Push:
     runs-on: ubuntu-latest
     steps:
       - name: checkout repo content
@@ -37,5 +37,4 @@ jobs:
       - name: Push changes
         if: steps.commit.outputs.push == 'true'
         uses: ad-m/github-push-action@master
-        with:
-           github_token: ${{ secrets.GITHUB_TOKEN }}
+
