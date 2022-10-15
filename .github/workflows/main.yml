@@ -11,8 +11,9 @@ jobs:
         uses: conda-incubator/setup-miniconda@v2
         with:
           activate-environment: anaconda-client-env
-          environment-file: ./environment.yml
           auto-activate-base: false
+      - run: |
+          conda create -n snake wand numpy python-dotenv requests -c conda-forge && conda activate snake && pip install pygame
 
       - name: Run Python Script
         uses: jannekem/run-python-script-action@v1.3
