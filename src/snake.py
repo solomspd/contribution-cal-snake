@@ -57,7 +57,7 @@ class snake_anim:
     def __init__(self, commit_cal, anim_dir="./animation"):
         pg.init()
         pg.display.set_caption("Contributions Snake")
-        self.background_color = pg.Color("black")
+        self.background_color = pg.Color((0, 0, 0, 0))
         self.colors = [
             pg.Color(i) for i in ["#2d333b", "#0e4429", "#006d32", "#26a641", "#39d353"]
         ]
@@ -78,7 +78,7 @@ class snake_anim:
             self.tile_gap + self.cal_width * (self.tile_size + self.tile_gap),
             self.tile_gap + self.cal_height * (self.tile_size + self.tile_gap),
         )
-        self.screen = pg.display.set_mode((self.screen_size[0], self.screen_size[1]))
+        self.screen = pg.display.set_mode(self.screen_size, 0, 32)
         snake_length = 1
         for i in range(len(self.tiles)):
             for j in range(len(self.tiles[i])):
@@ -87,7 +87,6 @@ class snake_anim:
         self.snake = snake(
             length=snake_length, block_size=self.tile_size, tile_gap=self.tile_gap
         )
-        self.clock = pg.time.Clock()
         self.moves = []
         self.frame = 0
         self.dir = Path(anim_dir).resolve()
@@ -111,7 +110,6 @@ class snake_anim:
                 self.snake.eat(self.tiles[snake_head[0]][snake_head[1]])
                 self.tiles[snake_head[0]][snake_head[1]] = self.colors[0]
             self.draw()
-            self.clock.tick(30)
         self.save_anim()
         pg.quit()
         quit()
@@ -155,10 +153,18 @@ class snake_anim:
         self.save_frame()
 
     def save_frame(self):
-        frame = self.dir / f"snake-{self.frame:05}.png"
-        pg.image.save(self.screen, frame)
-        self.anim_frames.sequence.append(Image(filename=frame))
-        self.frame += 1
+        # frame = self.dir / f"snake-{self.frame:05}.png"
+        # pg.image.save(self.screen, frame)
+        # self.frame += 1
+        self.anim_frames.sequence.append(
+            Image(
+                blob=pg.image.tostring(self.screen, "RGBA"),
+                height=self.screen_height,
+                width=self.screen_width,
+                depth=8,
+                format="RGBA",
+            )
+        )
 
     def save_anim(self):
         self.anim_frames.type = "optimize"
