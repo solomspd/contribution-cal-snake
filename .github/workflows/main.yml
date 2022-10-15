@@ -7,13 +7,17 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - name: checkout repo content
+        uses: actions/checkout@v2.5.0
       - name: Install Dependencies
         run: |
           pip install snake wand numpy python-dotenv requests pygame
-
+      - name: Setup Python
+        uses: actions/setup-python@v4.3.0
+        with:
+          python-version: 3.8 #install the python needed
       - name: Run Python Script
-        uses: jannekem/run-python-script-action@v1.3
+        run: |
+          python ./src/main.py
         env:
           ACCESS_TOKEN: ${{ secrets.SuperSecret }}
-        with:
-          script: ./src/main.py
