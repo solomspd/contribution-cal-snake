@@ -4,7 +4,7 @@ on:
   schedule:
     - cron: "0 13 * * 1"
 jobs:
-  Setup_And_Run:
+  Setup_And_Run_And_Push:
     runs-on: ubuntu-latest
     steps:
       - name: checkout repo content
@@ -18,6 +18,23 @@ jobs:
           pip install wand numpy python-dotenv requests pygame
       - name: Run Python Script
         env:
-          ACCESS_TOKEN: ${{ secrets.SuperSecret }}
+          ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
         run: |
           python ./src/main.py
+      - name: Commit files
+        id: commit
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "github-actions"
+          git add --all
+          if [-z "$(git status --porcelain)"]; then
+             echo "::set-output name=push::false"
+          else
+             git commit -m "Add changes" -a
+             echo "::set-output name=push::true"
+          fi
+        shell: bash
+      - name: Push changes
+        if: steps.commit.outputs.push == 'true'
+        uses: ad-m/github-push-action@master
+
