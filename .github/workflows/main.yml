@@ -8,11 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Install Dependencies
-        uses: conda-incubator/setup-miniconda@v2
-        with:
-          activate-environment: anaconda-client-env
-          auto-activate-base: false
-      - run: |
+        run: |
           pip install snake wand numpy python-dotenv requests pygame
           cwd
 
