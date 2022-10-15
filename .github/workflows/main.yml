@@ -13,7 +13,7 @@ jobs:
           activate-environment: anaconda-client-env
           auto-activate-base: false
       - run: |
-          conda create -n snake wand numpy python-dotenv requests -c conda-forge && conda activate snake && pip install pygame
+          pip install snake wand numpy python-dotenv requests pygame
 
       - name: Run Python Script
         uses: jannekem/run-python-script-action@v1.3
