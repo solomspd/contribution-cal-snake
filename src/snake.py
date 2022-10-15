@@ -4,6 +4,7 @@ import numpy as np
 from itertools import product, repeat
 from bisect import bisect_left
 import logging
+from pathlib import Path
 
 
 class snake:
@@ -52,7 +53,7 @@ class snake:
 
 
 class snake_anim:
-    def __init__(self, commit_cal):
+    def __init__(self, commit_cal, anim_dir="./animation"):
         pg.init()
         pg.display.set_caption("Contributions Snake")
         self.background_color = pg.Color("black")
@@ -85,9 +86,14 @@ class snake_anim:
         self.snake = snake(length=snake_length, block_size=self.tile_size, tile_gap=self.tile_gap)
         self.clock = pg.time.Clock()
         self.moves = []
+        self.frame = 0
+        self.dir = Path(anim_dir).resolve()
 
     def run(self):
         matrix = [[0] * 52] * 7
+        self.frame = 0
+        for i in self.dir.iterdir(): # clear output dir of previous animation
+            i.unlink()
         self.generateSpiralOrder(matrix, "R")
         for i in range(len(self.moves)):
             self.snake.move(self.moves[i])
@@ -100,7 +106,7 @@ class snake_anim:
                 self.snake.eat(self.tiles[snake_head[0]][snake_head[1]])
                 self.tiles[snake_head[0]][snake_head[1]] = self.colors[0]
             self.draw()
-            self.clock.tick(5)
+            self.clock.tick(30)
         pg.quit()
         quit()
 
@@ -140,3 +146,8 @@ class snake_anim:
 
         self.snake.draw(self.screen)
         pg.display.update()
+        self.save_frame()
+
+    def save_frame(self):
+        pg.image.save(self.screen, self.dir / f"snake-{self.frame:05}.png")
+        self.frame += 1
