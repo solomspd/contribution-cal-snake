@@ -1,9 +1,7 @@
-from turtle import position
 import pygame as pg
 import numpy as np
-from itertools import product, repeat
+from itertools import repeat
 from bisect import bisect_left
-import logging
 from pathlib import Path
 from wand.image import Image
 
