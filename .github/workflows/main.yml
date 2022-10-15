@@ -2,7 +2,7 @@ name: Generate GIF
 on:
   workflow_dispatch:
   schedule:
-  - cron: "0 13 * * 1"
+    - cron: "0 13 * * 1"
 jobs:
   Setup_And_Run:
     runs-on: ubuntu-latest
