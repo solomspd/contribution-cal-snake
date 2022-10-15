@@ -5,10 +5,13 @@ from itertools import product, repeat
 from bisect import bisect_left
 import logging
 from pathlib import Path
+from wand.image import Image
 
 
 class snake:
-    def __init__(self, length=1, color=(0, 0, 255), block_size=20, bounds=(52, 7), tile_gap=2):
+    def __init__(
+        self, length=1, color=(0, 0, 255), block_size=20, bounds=(52, 7), tile_gap=2
+    ):
         self.body = list(repeat((tile_gap, tile_gap), length))
         self.block_size = block_size
         self.bounds = bounds
@@ -49,7 +52,7 @@ class snake:
             )
 
     def eat(self, color):
-        self.colors.insert(1,color)
+        self.colors.insert(1, color)
 
 
 class snake_anim:
@@ -83,16 +86,19 @@ class snake_anim:
             for j in range(len(self.tiles[i])):
                 if self.tiles[i][j] != self.colors[0]:
                     snake_length += 1
-        self.snake = snake(length=snake_length, block_size=self.tile_size, tile_gap=self.tile_gap)
+        self.snake = snake(
+            length=snake_length, block_size=self.tile_size, tile_gap=self.tile_gap
+        )
         self.clock = pg.time.Clock()
         self.moves = []
         self.frame = 0
         self.dir = Path(anim_dir).resolve()
+        self.anim_frames = Image()
 
     def run(self):
         matrix = [[0] * 52] * 7
         self.frame = 0
-        for i in self.dir.iterdir(): # clear output dir of previous animation
+        for i in self.dir.iterdir():  # clear output dir of previous animation
             i.unlink()
         self.generateSpiralOrder(matrix, "R")
         for i in range(len(self.moves)):
@@ -107,6 +113,7 @@ class snake_anim:
                 self.tiles[snake_head[0]][snake_head[1]] = self.colors[0]
             self.draw()
             self.clock.tick(30)
+        self.save_anim()
         pg.quit()
         quit()
 
@@ -149,5 +156,11 @@ class snake_anim:
         self.save_frame()
 
     def save_frame(self):
-        pg.image.save(self.screen, self.dir / f"snake-{self.frame:05}.png")
+        frame = self.dir / f"snake-{self.frame:05}.png"
+        pg.image.save(self.screen, frame)
+        self.anim_frames.sequence.append(Image(filename=frame))
         self.frame += 1
+
+    def save_anim(self):
+        self.anim_frames.type = "optimize"
+        self.anim_frames.save(filename=self.dir / "snake.gif")
