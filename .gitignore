@@ -131,4 +131,4 @@ dmypy.json
 .pyre/
 
 # ignore animation files
-animation/
+animation/*.png
