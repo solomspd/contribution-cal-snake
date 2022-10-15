@@ -78,7 +78,7 @@ class snake_anim:
             self.tile_gap + self.cal_height * (self.tile_size + self.tile_gap),
         )
         self.screen = pg.display.set_mode((self.screen_size[0], self.screen_size[1]))
-        snake_length = 1;
+        snake_length = 1
         for i in range(len(self.tiles)):
             for j in range(len(self.tiles[i])):
                 if self.tiles[i][j] != self.colors[0]:
