@@ -96,6 +96,7 @@ class snake_anim:
     def run(self):
         matrix = [[0] * 52] * 7
         self.frame = 0
+        self.dir.mkdir(exist_ok=True)
         for i in self.dir.iterdir():  # clear output dir of previous animation
             i.unlink()
         self.generateSpiralOrder(matrix, "R")
