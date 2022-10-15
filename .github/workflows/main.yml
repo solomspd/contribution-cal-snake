@@ -15,5 +15,7 @@ jobs:
 
       - name: Run Python Script
         uses: jannekem/run-python-script-action@v1.3
+        env:
+          SUPER_SECRET: ${{ secrets.SuperSecret }}
         with:
           script: /src/main.py
