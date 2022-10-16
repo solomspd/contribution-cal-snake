@@ -56,7 +56,7 @@ class snake:
 class snake_anim:
     def __init__(self, commit_cal, anim_dir="./animation"):
         pg.init()
-        pg.display.set_caption("Contributions Snake")
+        pg.display.set_caption("Contribution Calendar Snake")
         self.background_color = pg.Color((0, 0, 0, 0))
         self.colors = [
             pg.Color(i) for i in ["#2d333b", "#0e4429", "#006d32", "#26a641", "#39d353"]
@@ -78,7 +78,7 @@ class snake_anim:
             self.tile_gap + self.cal_width * (self.tile_size + self.tile_gap),
             self.tile_gap + self.cal_height * (self.tile_size + self.tile_gap),
         )
-        self.screen = pg.display.set_mode(self.screen_size, 0, 32)
+        self.screen = pg.display.set_mode(self.screen_size, pg.SRCALPHA, 32)
         snake_length = 1
         for i in range(len(self.tiles)):
             for j in range(len(self.tiles[i])):
@@ -88,13 +88,11 @@ class snake_anim:
             length=snake_length, block_size=self.tile_size, tile_gap=self.tile_gap
         )
         self.moves = []
-        self.frame = 0
         self.dir = Path(anim_dir).resolve()
         self.anim_frames = Image()
 
     def run(self):
         matrix = [[0] * 52] * 7
-        self.frame = 0
         self.dir.mkdir(exist_ok=True)
         for i in self.dir.iterdir():  # clear output dir of previous animation
             i.unlink()
@@ -153,9 +151,6 @@ class snake_anim:
         self.save_frame()
 
     def save_frame(self):
-        # frame = self.dir / f"snake-{self.frame:05}.png"
-        # pg.image.save(self.screen, frame)
-        # self.frame += 1
         self.anim_frames.sequence.append(
             Image(
                 blob=pg.image.tostring(self.screen, "RGBA"),
