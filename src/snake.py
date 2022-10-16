@@ -68,9 +68,15 @@ class snake_anim:
 
         for i in range(len(self.tiles)):
             for j in range(len(self.tiles[i])):
-                self.tiles[i][j] = self.colors[
-                    min(bisect_left(bounds, self.tiles[i][j]), len(self.colors) - 1)
-                ]
+                if self.tiles[i][j] == 0:
+                    self.tiles[i][j] = self.colors[0]
+                else:
+                    self.tiles[i][j] = self.colors[
+                        min(
+                            bisect_left(bounds[1:], self.tiles[i][j]) + 1,
+                            len(self.colors) - 1,
+                        )
+                    ]
         self.tile_size = 20
         self.tile_gap = 2
         self.cal_size = self.cal_width, self.cal_height = 53, 7
