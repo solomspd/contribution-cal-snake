@@ -94,12 +94,11 @@ class snake_anim:
         self.anim_frames = Image()
 
     def run(self):
-        matrix = [[0] * 52] * 7
         self.frame = 0
         self.dir.mkdir(exist_ok=True)
         for i in self.dir.iterdir():  # clear output dir of previous animation
             i.unlink()
-        self.generateSpiralOrder(matrix, "R")
+        self.generateSpiralOrder()
         for i in range(len(self.moves)):
             self.snake.move(self.moves[i])
             snake_head = self.snake.head
@@ -116,23 +115,25 @@ class snake_anim:
         pg.quit()
         quit()
 
-    def generateSpiralOrder(self, matrix, direction):
-        if not matrix:
-            return
-        row = list(matrix.pop(0))
-        if direction == "R":
-            self.moves.extend(["R"] * len(row))
-            self.generateSpiralOrder(([*zip(*matrix)][::-1]), "D")
-        if direction == "L":
-            self.moves.extend(["L"] * len(row))
-            self.generateSpiralOrder(([*zip(*matrix)][::-1]), "U")
-        if direction == "U":
-            self.moves.extend(["U"] * len(row))
-            self.generateSpiralOrder(([*zip(*matrix)][::-1]), "R")
-        if direction == "D":
-            self.moves.extend(["D"] * len(row))
-            self.generateSpiralOrder(([*zip(*matrix)][::-1]), "L")
+    def generateSpiralOrder(self):
+        horizontal = len(self.tiles) - 1
+        vertical = 6
 
+        iteration = 0
+
+        while(horizontal >= 0 and vertical >= 0):
+            self.moves.extend(['R'] * horizontal)
+            self.moves.extend(['D'] * vertical)
+            vertical -= 1
+            if(iteration != 0):
+                horizontal -= 1
+            if(vertical > 0):
+                self.moves.extend(['L'] * horizontal)
+                self.moves.extend(['U'] * vertical)
+            vertical -= 1
+            horizontal -= 1
+            iteration += 1
+            
     def draw(self):
         self.screen.fill(self.background_color)
 
