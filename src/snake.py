@@ -149,7 +149,7 @@ class snake_anim:
             vertical -= 1
             horizontal -= 1
             iteration += 1
-        self.moves.extend(['R'] * (len(self.snake.body) + len(self.tiles) / 2))
+        self.moves.extend(['R'] * (len(self.snake.body) + len(self.tiles) // 2))
             
     def draw(self):
         self.screen.fill(self.background_color)
