@@ -41,22 +41,15 @@ class snake:
             dir_ammount = (self.block_size + self.tile_gap, 0)
             self.head[0] += 1
 
-        self.head_pos[0] += dir_ammount[0]
-        self.head_pos[1] += dir_ammount[1]
         self.body.append(self.head_pos)
-        # self.body.append(
-        #     (self.body[-1][0] + dir_ammount[0], self.body[-1][1] + dir_ammount[1])
-        # )
+        self.head_pos = (
+            self.head_pos[0] + dir_ammount[0],
+            self.head_pos[1] + dir_ammount[1],
+        )
 
     def draw(self, screen):
-        # pg.draw.rect(
-        #     screen,
-        #     self.head_color,
-        #     (*self.head_pos, (self.block_size, self.block_size)),
-        #     0,
-        #     4,
-        # )
         screen.blit(self.head_block, self.head_pos)
+        pg.draw.rect(self.head_block, self.head_color, (0, 0, 20, 20), 1, 4)
         for body, color in zip(reversed(self.body), self.colors):
             pg.draw.rect(
                 screen,
@@ -144,15 +137,15 @@ class snake_anim:
 
         iteration = 0
 
-        while(horizontal >= 0 and vertical >= 0):
-            self.moves.extend(['R'] * horizontal)
-            self.moves.extend(['D'] * vertical)
+        while horizontal >= 0 and vertical >= 0:
+            self.moves.extend(["R"] * horizontal)
+            self.moves.extend(["D"] * vertical)
             vertical -= 1
-            if(iteration != 0):
+            if iteration != 0:
                 horizontal -= 1
-            if(vertical > 0):
-                self.moves.extend(['L'] * horizontal)
-                self.moves.extend(['U'] * vertical)
+            if vertical > 0:
+                self.moves.extend(["L"] * horizontal)
+                self.moves.extend(["U"] * vertical)
             vertical -= 1
             horizontal -= 1
             iteration += 1
