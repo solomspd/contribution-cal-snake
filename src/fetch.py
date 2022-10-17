@@ -3,6 +3,7 @@ import json
 from dotenv import load_dotenv
 import os
 import logging
+import io
 
 load_dotenv()  # take environment variables from .env.
 
@@ -25,10 +26,10 @@ def fetch(query):
 
     r_dict = json.loads(r.text)
 
-    return mapResponse(r_dict)
+    return map_response(r_dict)
 
 
-def mapResponse(response):
+def map_response(response):
     weeks = (
         response.get("data")
         .get("viewer")
@@ -50,7 +51,7 @@ def mapResponse(response):
     )
 
 
-def getContributionsCalendar():
+def get_contributions_calendar():
     query = {
         "query": """
     {
@@ -71,4 +72,27 @@ def getContributionsCalendar():
     }
     ret = fetch(query)
     logging.debug(ret)
+    return ret
+
+
+def get_profile_pic():
+    query = {
+        "query": "viewer{login}"
+    }
+    token = os.environ.get("ACCESS_TOKEN")
+    headers = {
+        "Content-type": "application/json",
+        "Authorization": "token " + token,
+    }
+
+    r = requests.post(url=URL, json=query, headers=headers)
+
+    if r.status_code != 200:
+        print("Error: ", r.status_code)
+        logging.error("Error: " + str(r.status_code))
+        return None
+
+    ret = json.loads(r.text)
+    logging.debug(ret)
+    ret = io.BytesIO(requests.get(f"https://github.com/{ret}.png").content)
     return ret

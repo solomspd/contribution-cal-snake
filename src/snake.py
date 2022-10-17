@@ -8,14 +8,24 @@ from wand.image import Image
 
 class snake:
     def __init__(
-        self, length=1, color=(0, 0, 255), block_size=20, bounds=(52, 7), tile_gap=2
+        self,
+        head_img,
+        length=1,
+        color=(0, 0, 255),
+        block_size=20,
+        bounds=(52, 7),
+        tile_gap=2,
     ):
         self.body = list(repeat((tile_gap, tile_gap), length))
         self.block_size = block_size
         self.bounds = bounds
         self.tile_gap = tile_gap
         self.head = [0, 0]
-        self.colors = [color]
+        self.head_block = pg.image.load(head_img)
+        self.head_block = pg.transform.scale(self.head_block, (block_size, block_size))
+        self.head_pos = (tile_gap, tile_gap)
+        self.head_color = color
+        self.colors = []
 
     def move(self, direction):
         if direction == "U":
@@ -31,30 +41,37 @@ class snake:
             dir_ammount = (self.block_size + self.tile_gap, 0)
             self.head[0] += 1
 
-        tail = self.body.pop(0)
-        if len(self.body) == 0:
-            self.body.append((tail[0] + dir_ammount[0], tail[1] + dir_ammount[1]))
-        else:
-            self.body.append(
-                (self.body[-1][0] + dir_ammount[0], self.body[-1][1] + dir_ammount[1])
-            )
+        self.head_pos[0] += dir_ammount[0]
+        self.head_pos[1] += dir_ammount[1]
+        self.body.append(self.head_pos)
+        # self.body.append(
+        #     (self.body[-1][0] + dir_ammount[0], self.body[-1][1] + dir_ammount[1])
+        # )
 
     def draw(self, screen):
-        for i, color in enumerate(self.colors):
+        # pg.draw.rect(
+        #     screen,
+        #     self.head_color,
+        #     (*self.head_pos, (self.block_size, self.block_size)),
+        #     0,
+        #     4,
+        # )
+        screen.blit(self.head_block, self.head_pos)
+        for body, color in zip(reversed(self.body), self.colors):
             pg.draw.rect(
                 screen,
                 color,
-                (*self.body[len(self.body) - 1 - i], self.block_size, self.block_size),
+                (*body, self.block_size, self.block_size),
                 0,
                 4,
             )
 
     def eat(self, color):
-        self.colors.insert(1, color)
+        self.colors.insert(0, color)
 
 
 class snake_anim:
-    def __init__(self, commit_cal, anim_dir="./animation"):
+    def __init__(self, commit_cal, profile_pic, anim_dir="./animation"):
         pg.init()
         pg.display.set_caption("Contribution Calendar Snake")
         self.background_color = pg.Color((0, 0, 0, 0))
@@ -91,7 +108,10 @@ class snake_anim:
                 if self.tiles[i][j] != self.colors[0]:
                     snake_length += 1
         self.snake = snake(
-            length=snake_length, block_size=self.tile_size, tile_gap=self.tile_gap
+            head_img=profile_pic,
+            length=snake_length,
+            block_size=self.tile_size,
+            tile_gap=self.tile_gap,
         )
         self.moves = []
         self.dir = Path(anim_dir).resolve()
