@@ -12,4 +12,4 @@
   
 3. Add the token to the forked repo's secrets, to do that go to the <ins>forked repo's settings</ins> -> <ins>secrets</ins> -> <ins>actions</ins> -> click <ins>new repository secret</ins> -> enter the name `ACCESS_TOKEN` -> and pase the token in the value field -> click <ins>add secret</ins>
   
-4. To generate the first image without waiting for the secheduler, go to the <ins>forked repo</ins> -> <ins>actions</ins> -> click on the `generate GIF` workflow -> click <ins>run workflow</ins>
+4. To generate the first image without waiting for the secheduler, go to the <ins>forked repo</ins> -> <ins>actions</ins> -> click on the `Generate GIF` workflow -> click <ins>run workflow</ins>
