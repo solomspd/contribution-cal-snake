@@ -25,8 +25,12 @@ def fetch(query):
         return None
 
     r_dict = json.loads(r.text)
-
-    return map_response(r_dict)
+    pic = io.BytesIO(
+        requests.get(
+            f"https://github.com/{r_dict['data']['viewer']['login']}.png"
+        ).content
+    )
+    return map_response(r_dict), pic
 
 
 def map_response(response):
@@ -51,11 +55,12 @@ def map_response(response):
     )
 
 
-def get_contributions_calendar():
+def get_data():
     query = {
         "query": """
     {
         viewer { 
+            login,
             contributionsCollection {
                 contributionCalendar {
                     totalContributions
@@ -72,27 +77,4 @@ def get_contributions_calendar():
     }
     ret = fetch(query)
     logging.debug(ret)
-    return ret
-
-
-def get_profile_pic():
-    query = {
-        "query": "viewer{login}"
-    }
-    token = os.environ.get("ACCESS_TOKEN")
-    headers = {
-        "Content-type": "application/json",
-        "Authorization": "token " + token,
-    }
-
-    r = requests.post(url=URL, json=query, headers=headers)
-
-    if r.status_code != 200:
-        print("Error: ", r.status_code)
-        logging.error("Error: " + str(r.status_code))
-        return None
-
-    ret = json.loads(r.text)
-    logging.debug(ret)
-    ret = io.BytesIO(requests.get(f"https://github.com/{ret}.png").content)
     return ret
