@@ -10,7 +10,7 @@ class snake:
     def __init__(
         self,
         head_img,
-        length=1,
+        length=0,
         color=(0, 0, 255),
         block_size=20,
         bounds=(52, 7),
@@ -72,15 +72,17 @@ class snake_anim:
             pg.Color(i) for i in ["#2d333b", "#0e4429", "#006d32", "#26a641", "#39d353"]
         ]
         self.tiles = commit_cal
-        mx = max(map(max, self.tiles))
-        mn = max(map(min, self.tiles))
-        bounds = np.linspace(mn, mx, len(self.colors))
+        bounds = np.linspace(
+            min(map(min, self.tiles)), max(map(max, self.tiles)), len(self.colors)
+        )
 
+        self.commit_num = 0
         for i in range(len(self.tiles)):
             for j in range(len(self.tiles[i])):
                 if self.tiles[i][j] == 0:
                     self.tiles[i][j] = self.colors[0]
                 else:
+                    self.commit_num += 1
                     self.tiles[i][j] = self.colors[
                         min(
                             bisect_left(bounds[1:], self.tiles[i][j]) + 1,
@@ -95,14 +97,8 @@ class snake_anim:
             self.tile_gap + self.cal_height * (self.tile_size + self.tile_gap),
         )
         self.screen = pg.display.set_mode(self.screen_size, pg.SRCALPHA, 32)
-        snake_length = 1
-        for i in range(len(self.tiles)):
-            for j in range(len(self.tiles[i])):
-                if self.tiles[i][j] != self.colors[0]:
-                    snake_length += 1
         self.snake = snake(
             head_img=profile_pic,
-            length=snake_length,
             block_size=self.tile_size,
             tile_gap=self.tile_gap,
         )
@@ -115,7 +111,7 @@ class snake_anim:
         self.dir.mkdir(exist_ok=True)
         for i in self.dir.iterdir():  # clear output dir of previous animation
             i.unlink()
-        self.generateSpiralOrder()
+        self.generateSpiralOrder(self.commit_num)
         for i in range(len(self.moves)):
             self.snake.move(self.moves[i])
             snake_head = self.snake.head
@@ -131,7 +127,7 @@ class snake_anim:
         pg.quit()
         quit()
 
-    def generateSpiralOrder(self):
+    def generateSpiralOrder(self, commit_num):
         horizontal = len(self.tiles) - 1
         vertical = 6
 
@@ -149,8 +145,8 @@ class snake_anim:
             vertical -= 1
             horizontal -= 1
             iteration += 1
-        self.moves.extend(['R'] * (len(self.snake.body) + len(self.tiles) // 2))
-            
+        self.moves.extend(["R"] * (commit_num + len(self.tiles) // 2))
+
     def draw(self):
         self.screen.fill(self.background_color)
 
